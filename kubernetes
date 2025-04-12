@@ -1,0 +1,44 @@
+Minikube With ingress: 
+      
+sudo apt update
+    sudo apt install docker.io -y
+   sudo chmod 777 /var/run/docker.sock
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+   sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+   minikube start
+    sudo snap install kubectl --classic
+
+Deployment: 
+
+   
+  
+    kubectl create deployment website --image=juhika/website  --port=80
+
+Service: 
+
+     minikube addons enable ingress
+  
+kubectl expose deploy website --type NodePort
+   sudo nano ingress.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /website
+            pathType: Prefix
+            backend:
+              service:
+                name: website
+                port:
+                  number: 80
+
+kubectl create -f ingress.yaml 
+kubectl port-forward service/ingress-nginx-controller 8443:443 -n ingress-nginx --address 0.0.0.0
