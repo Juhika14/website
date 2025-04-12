@@ -1,0 +1,25 @@
+---
+- name: Install Docker and Java 11 on all slaves
+  hosts: slave1,slave2,slave3
+  become: yes
+
+  tasks:
+    - name: Install Java 17
+      apt:
+        name: openjdk-17-jdk
+        update_cache: yes
+        state: latest
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        update_cache: yes
+        state: latest
+
+- name: Run script on slave1
+  hosts: slave1
+  become: yes
+
+  tasks:
+    - name: Run script
+      script: script.sh
